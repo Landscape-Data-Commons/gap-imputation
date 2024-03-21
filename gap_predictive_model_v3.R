@@ -1,5 +1,5 @@
 ### Author: Joe Brehm ###
-### Last updated 10/31/2023 ###
+### Last updated 3/21/2024 ###
 
 ### 1 Load Packages and set paths and run parameters ####
 library(tidyverse)
@@ -52,7 +52,6 @@ if(getnewdata){
     gap_tall_NRI_filter_PC %>% 
     dplyr::filter(Gap.P == Gap.C & SeqNo.P == SeqNo.C) %>%
     dplyr::pull(PrimaryKey)
-  
   
   gap_tall_AIMLMF <- gap_tall_AIMLMF_filter %>% dplyr::filter(!(PrimaryKey %in% badpkeys_AIMLMF))
   gap_tall_NRI <- gap_tall_NRI_filter %>% dplyr::filter(!(PrimaryKey %in% badpkeys_NRI))
@@ -280,12 +279,6 @@ if(getnewdata){
   sd_gap50to100 <- sd(all_canopy_clean$CP_percent_50to100, na.rm = T)
   
   all_canopy_clean <- all_canopy_clean %>%
-    # dplyr::filter(!(CP_percent_25plus >= (sd_gap25plus/1 + CA_percent_25plus)) &
-    #                 !(CP_percent_100plus >= (sd_gap100plus/1 + CA_percent_100plus)) &   
-    #                 !(CP_percent_200plus >= (sd_gap200plus/1 + CA_percent_200plus)) &
-    #                 !(CP_percent_100to200 >= (sd_gap100to200/1 + CA_percent_100to200)) &
-    #                 !(CP_percent_25to50 >= (sd_gap25to50/1 + CA_percent_25to50)) &
-    #                 !(CP_percent_50to100 >= (sd_gap50to100/1 + CA_percent_50to100)))     
     dplyr::filter(!(CA_percent_25plus >= (sd_gap25plus/0.5 + CP_percent_25plus)))
   
   ### NEW 3/27 check instances where there is only p gap on plot, and the crew just copied over to the C gap data ###
@@ -303,10 +296,6 @@ if(getnewdata){
   all_canopy_clean <- all_canopy_clean %>% dplyr::filter(PrimaryKey %in% uncopied_gap$PrimaryKey)
   rm(uncopied_gap, sd_gap100plus, sd_gap100to200, sd_gap200plus, sd_gap25plus, sd_gap25to50, sd_gap50to100, gap_presence)
   
-  # box cox transformation requries all response vars to be >0
-  # all_canopy_clean[,3:ncol(all_canopy_clean)] <- all_canopy_clean[,3:ncol(all_canopy_clean)] + 1e-10
-  # all_canopy_clean[,3:ncol(all_canopy_clean)] <- all_canopy_clean[,3:ncol(all_canopy_clean)] + 1e-10
-  
   ### 1.5 save data
   write.csv(all_canopy_clean, file = file.path(path_out, "all_canopy_clean.csv"), row.names = F)
 } else {
@@ -317,11 +306,6 @@ colnames(all_canopy_clean)
 
 ### 2 Write analysis function ####
 fn_makemodels <- function(indata){
-  # 
-  # if(any(indata <= 0) & doBC){
-  #   warning("Negative values found. Can't do the box cox transformation here")
-  #   doBC = F
-  # }
   # Filter data to remove non-zeroes 
   indata_200plus <- subset(indata, CP_percent_200plus > 0 & CA_percent_200plus > 0)
   indata_100plus <- subset(indata, CP_percent_100plus > 0 & CA_percent_100plus > 0)
