@@ -643,7 +643,7 @@ all_canopy_clean_sqrt[,3:ncol(all_canopy_clean)] <- sqrt(all_canopy_clean[,3:nco
 
 all_canopy_clean_log <- all_canopy_clean
 all_canopy_clean_log[,3:ncol(all_canopy_clean)] <- log(all_canopy_clean[,3:ncol(all_canopy_clean)])
-all_canopy_clean_log[all_canopy_clean_log == -Inf] <- 0 #### TO DO IS THIS APPROPRIATE
+all_canopy_clean_log[all_canopy_clean_log == -Inf] <- 0
 
 all_canopy_clean_sq <- all_canopy_clean
 all_canopy_clean_sq[,3:ncol(all_canopy_clean)] <- (all_canopy_clean[,3:ncol(all_canopy_clean)])^2
